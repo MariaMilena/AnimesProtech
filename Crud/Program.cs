@@ -20,6 +20,9 @@ builder.Services.AddSwaggerGen();
 
 builder.Services.AddControllers();
 
+var myhandlers = AppDomain.CurrentDomain.Load("Crud.Application");
+builder.Services.AddMediatR(cfg => cfg.RegisterServicesFromAssemblies(myhandlers));
+
 var app = builder.Build();
 
 // Configure the HTTP request pipeline.

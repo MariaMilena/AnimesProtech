@@ -1,5 +1,7 @@
-﻿using Crud.Domain.Entities;
+﻿using Crud.Application.Animes.Commands;
+using Crud.Domain.Entities;
 using Crud.Domain.Interfaces;
+using MediatR;
 using Microsoft.AspNetCore.Http;
 using Microsoft.AspNetCore.Mvc;
 
@@ -10,51 +12,51 @@ namespace Crud.Controllers
     public class AnimeController : ControllerBase
     {
         private readonly IUnitOfWork _unitOfWork;
+        private readonly IMediator _mediator;
 
-        public AnimeController(IUnitOfWork unitOfWork)
+        public AnimeController(IUnitOfWork unitOfWork, IMediator mediator)
         {
             _unitOfWork = unitOfWork;
+            _mediator = mediator;
+        }
+
+        [HttpGet("{id}")]
+        public async Task<ActionResult> GetAnime(int id)
+        {
+            var anime = await _unitOfWork.AnimeRepository.GetAnimeById(id);
+
+            if (anime == null) 
+                NotFound("Anime não encontrado");
+
+            return Ok(anime);
         }
 
         [HttpPost]
-        public async Task<ActionResult> AddAnime(Anime anime)
+        public async Task<ActionResult> AddAnime(CreateAnimeCommand command)
         {
-            var animeNew = await _unitOfWork.AnimeRepository.AddAnime(anime);
+            var createdANime = await _mediator.Send(command);
 
-            await _unitOfWork.CommitAsync();
-            return Ok(animeNew);
+            return CreatedAtAction(nameof(GetAnime), new { id = createdANime.Id }, createdANime);
+        }
+
+        [HttpPut("{id}")]
+        public async Task<ActionResult> UpdateAnime(int id, UpdateAnimeCommand command)
+        { 
+            command.Id = id;
+
+            var updatedAnime = await _mediator.Send(command);
+
+            return updatedAnime != null ? Ok(updatedAnime) : NotFound("Anime não encontrado");
         }
 
         [HttpDelete("{id}")]
         public async Task<ActionResult> DeleteAnime(int id)
         {
-            var deleteAnime = await _unitOfWork.AnimeRepository.DeleteAnime(id);
+            var command = new DeleteAnimeCommand { Id = id };
 
-            if (deleteAnime == null)
-                return NotFound("Anime não encontrado");
+            var deletedAnime = await _mediator.Send(command);
 
-            await _unitOfWork.CommitAsync();
-
-            return Ok(deleteAnime);
-        }
-
-        [HttpPut]
-        public async Task<ActionResult> UpdateAnime(int id, Anime anime)
-        {
-            var existingAnime = await _unitOfWork.AnimeRepository.GetAnimeById(id);
-
-            if (existingAnime is null)
-                return NotFound("Anime não encontrado.");
-
-            existingAnime.Name = anime.Name;
-            existingAnime.Summary = anime.Summary;
-            existingAnime.Director = anime.Director;
-
-            _unitOfWork.AnimeRepository.UpdateAnime(existingAnime);
-
-            await _unitOfWork.CommitAsync();
-
-            return Ok(existingAnime);
+            return deletedAnime != null ? Ok(deletedAnime) : NotFound("Anime não encontrado");
         }
 
         [HttpGet]
