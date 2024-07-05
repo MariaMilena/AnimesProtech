@@ -56,5 +56,26 @@ namespace Crud.Controllers
 
             return Ok(existingAnime);
         }
+
+        [HttpGet]
+        public async Task<IActionResult> GetAnimes(
+            [FromQuery] string? diretor,
+            [FromQuery] string? nome,
+            [FromQuery] string? resumo,
+            [FromQuery] int pageIndex = 0,
+            [FromQuery] int pageSize = 10)
+        {
+            var (animes, totalRecords) = await _unitOfWork.AnimeRepository.GetAnimes(nome, resumo, diretor, pageIndex, pageSize);
+
+            var result = new
+            {
+                TotalRecords = totalRecords,
+                PageIndex = pageIndex,
+                PageSize = pageSize,
+                Data = animes
+            };
+
+            return Ok(animes);
+        }
     }
 }

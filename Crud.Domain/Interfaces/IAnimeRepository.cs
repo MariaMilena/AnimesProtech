@@ -8,4 +8,5 @@ public interface IAnimeRepository
     Task<Anime> GetAnimeById(int id);
     Task<Anime> DeleteAnime(int id);
     void UpdateAnime(Anime anime);
+    Task<(IEnumerable<Anime> Animes, int TotalRecords)> GetAnimes(String? name, String? summary, String? director, int pageIndex, int pageSize);
 }
