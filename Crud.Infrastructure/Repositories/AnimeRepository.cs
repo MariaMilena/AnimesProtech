@@ -23,4 +23,26 @@ public class AnimeRepository : IAnimeRepository
 
         return anime;
     }
+
+    public async Task<Anime> GetAnimeById(int id)
+    {
+        var anime = await _appDbContext.Animes.FindAsync(id);
+
+        if (anime is null)
+            throw new InvalidOperationException("Anime não encontrado");
+
+        return anime;
+    }
+
+    public async Task<Anime> DeleteAnime(int id)
+    {
+        var anime = await GetAnimeById(id);
+
+        if (anime is null)
+            throw new InvalidOperationException("Anime não encontrado");
+
+        _appDbContext.Animes.Remove(anime);
+
+        return anime;
+    }
 }

@@ -24,5 +24,18 @@ namespace Crud.Controllers
             await _unitOfWork.CommitAsync();
             return Ok(animeNew);
         }
+
+        [HttpDelete("{id}")]
+        public async Task<ActionResult> DeleteAnime(int id)
+        {
+            var deleteAnime = await _unitOfWork.AnimeRepository.DeleteAnime(id);
+
+            if (deleteAnime == null)
+                return NotFound("Anime não encontrado");
+
+            await _unitOfWork.CommitAsync();
+
+            return Ok(deleteAnime);
+        }
     }
 }
