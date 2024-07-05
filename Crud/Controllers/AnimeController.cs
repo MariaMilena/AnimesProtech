@@ -1,9 +1,12 @@
 ﻿using Crud.Application.Animes.Commands;
+using Crud.Application.Animes.Queries;
 using Crud.Domain.Entities;
 using Crud.Domain.Interfaces;
 using MediatR;
 using Microsoft.AspNetCore.Http;
 using Microsoft.AspNetCore.Mvc;
+using System.IO;
+using System.Xml.Linq;
 
 namespace Crud.Controllers
 {
@@ -23,12 +26,11 @@ namespace Crud.Controllers
         [HttpGet("{id}")]
         public async Task<ActionResult> GetAnime(int id)
         {
-            var anime = await _unitOfWork.AnimeRepository.GetAnimeById(id);
+            var query = new GetAnimeByIdQuery { Id = id };
 
-            if (anime == null) 
-                NotFound("Anime não encontrado");
+            var anime = await _mediator.Send(query);
 
-            return Ok(anime);
+            return (anime != null) ? Ok(anime) : NotFound("Anime não encontrado");
         }
 
         [HttpPost]
@@ -67,7 +69,16 @@ namespace Crud.Controllers
             [FromQuery] int pageIndex = 0,
             [FromQuery] int pageSize = 10)
         {
-            var (animes, totalRecords) = await _unitOfWork.AnimeRepository.GetAnimes(nome, resumo, diretor, pageIndex, pageSize);
+            var query = new GetAnimesQuery
+            {
+                Name = nome,
+                Summary = resumo,
+                Director = diretor,
+                pageSize = pageSize,
+                pageIndex = pageIndex
+            };
+
+            var (animes, totalRecords) = await _mediator.Send(query);
 
             var result = new
             {

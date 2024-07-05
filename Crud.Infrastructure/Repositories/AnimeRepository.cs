@@ -56,12 +56,12 @@ public class AnimeRepository : IAnimeRepository
 
     }
 
-    public async Task<(IEnumerable<Anime> Animes, int TotalRecords)> GetAnimes(
+    public async Task<(IEnumerable<Anime>, int)> GetAnimes(
         String? name, 
         String? summary, 
-        String? director, 
-        int pageIndex, 
-        int pageSize)
+        String? director,
+        int pageSize,
+        int pageIndex)
     {
         var query = _appDbContext.Animes.AsQueryable();
 
