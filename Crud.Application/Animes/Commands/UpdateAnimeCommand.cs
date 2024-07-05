@@ -5,12 +5,9 @@ using System.Xml.Linq;
 
 namespace Crud.Application.Animes.Commands;
 
-public class UpdateAnimeCommand : IRequest<Anime>
+public class UpdateAnimeCommand : AnimeCommandBase
 {
     public int Id { get; set; }
-    public string? Name { get; set; }
-    public string? Summary { get; set; }
-    public string? Director { get; set; }
 
     public class UpdateAnimeCommandHandler : IRequestHandler<UpdateAnimeCommand, Anime>
     {

@@ -4,12 +4,8 @@ using MediatR;
 
 namespace Crud.Application.Animes.Commands;
 
-public class CreateAnimeCommand : IRequest<Anime>
+public class CreateAnimeCommand : AnimeCommandBase
 {
-    public string? Name { get; set; }
-    public string? Summary { get; set; }
-    public string? Director { get; set; }
-
     public class CreateAnimeCommandHandler : IRequestHandler<CreateAnimeCommand, Anime>
     {
         private readonly IUnitOfWork _unitOfWork;
