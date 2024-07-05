@@ -1,9 +1,17 @@
 using Crud.Domain.Interfaces;
 using Crud.Infrastructure.Data;
 using Crud.Infrastructure.Repositories;
+using Microsoft.Data.Sqlite;
 using Microsoft.EntityFrameworkCore;
+using System.Data;
 
 var builder = WebApplication.CreateBuilder(args);
+
+builder.Services.AddSingleton<IDbConnection>(provider =>
+{
+    var connectionString = builder.Configuration.GetConnectionString("DefaultConnection");
+    return new SqliteConnection(connectionString);
+});
 
 // Adiciona o serviço do contexto do banco de dados
 builder.Services.AddDbContext<AppDbContext>(options =>
@@ -12,6 +20,7 @@ builder.Services.AddDbContext<AppDbContext>(options =>
 
 builder.Services.AddScoped<IAnimeRepository, AnimeRepository>();
 builder.Services.AddScoped<IUnitOfWork, UnitOfWork>();
+builder.Services.AddTransient<IAnimeDapperRepository, IAnimeDapperRepository>();
 
 // Add services to the container.
 // Learn more about configuring Swagger/OpenAPI at https://aka.ms/aspnetcore/swashbuckle
@@ -28,6 +37,7 @@ var app = builder.Build();
 // Configure the HTTP request pipeline.
 if (app.Environment.IsDevelopment())
 {
+    app.UseDeveloperExceptionPage();
     app.UseSwagger();
     app.UseSwaggerUI();
 }

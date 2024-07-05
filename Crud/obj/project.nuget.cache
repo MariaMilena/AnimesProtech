@@ -1,9 +1,10 @@
 {
   "version": 2,
-  "dgSpecHash": "rPo+qG8HLFA=",
+  "dgSpecHash": "eLHLFLscNtA=",
   "success": true,
   "projectFilePath": "D:\\Github\\CrudApi\\Crud\\Crud.csproj",
   "expectedPackageFiles": [
+    "C:\\Users\\Milena\\.nuget\\packages\\dapper\\2.1.35\\dapper.2.1.35.nupkg.sha512",
     "C:\\Users\\Milena\\.nuget\\packages\\humanizer.core\\2.14.1\\humanizer.core.2.14.1.nupkg.sha512",
     "C:\\Users\\Milena\\.nuget\\packages\\mediatr\\12.3.0\\mediatr.12.3.0.nupkg.sha512",
     "C:\\Users\\Milena\\.nuget\\packages\\mediatr.contracts\\2.0.1\\mediatr.contracts.2.0.1.nupkg.sha512",

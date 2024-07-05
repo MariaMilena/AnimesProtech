@@ -1,4 +1,5 @@
 ﻿using Crud.Application.Animes.Commands;
+using Crud.Application.Animes.Queries;
 using Crud.Domain.Entities;
 using Crud.Domain.Interfaces;
 using MediatR;
@@ -11,24 +12,21 @@ namespace Crud.Controllers
     [ApiController]
     public class AnimeController : ControllerBase
     {
-        private readonly IUnitOfWork _unitOfWork;
         private readonly IMediator _mediator;
 
-        public AnimeController(IUnitOfWork unitOfWork, IMediator mediator)
+        public AnimeController(IMediator mediator)
         {
-            _unitOfWork = unitOfWork;
             _mediator = mediator;
         }
 
         [HttpGet("{id}")]
         public async Task<ActionResult> GetAnime(int id)
         {
-            var anime = await _unitOfWork.AnimeRepository.GetAnimeById(id);
+            var query = new GetAnimeByIdQuery { Id = id };
 
-            if (anime == null) 
-                NotFound("Anime não encontrado");
+            var anime = await _mediator.Send(query);
 
-            return Ok(anime);
+            return (anime != null) ? Ok(anime) : NotFound("Anime não encontrado");
         }
 
         [HttpPost]
@@ -67,7 +65,7 @@ namespace Crud.Controllers
             [FromQuery] int pageIndex = 0,
             [FromQuery] int pageSize = 10)
         {
-            var (animes, totalRecords) = await _unitOfWork.AnimeRepository.GetAnimes(nome, resumo, diretor, pageIndex, pageSize);
+            /*var (animes, totalRecords) = await _unitOfWork.AnimeRepository.GetAnimes(nome, resumo, diretor, pageIndex, pageSize);
 
             var result = new
             {
@@ -75,7 +73,11 @@ namespace Crud.Controllers
                 PageIndex = pageIndex,
                 PageSize = pageSize,
                 Data = animes
-            };
+            };*/
+
+            var query = new GetAnimesQuery { Name = nome, Director = diretor, Summary = resumo, pageIndex = pageIndex, pageSize = pageSize};
+
+            var animes = await _mediator.Send(query);
 
             return Ok(animes);
         }
