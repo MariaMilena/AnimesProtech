@@ -37,5 +37,24 @@ namespace Crud.Controllers
 
             return Ok(deleteAnime);
         }
+
+        [HttpPut]
+        public async Task<ActionResult> UpdateAnime(int id, Anime anime)
+        {
+            var existingAnime = await _unitOfWork.AnimeRepository.GetAnimeById(id);
+
+            if (existingAnime is null)
+                return NotFound("Anime não encontrado.");
+
+            existingAnime.Name = anime.Name;
+            existingAnime.Summary = anime.Summary;
+            existingAnime.Director = anime.Director;
+
+            _unitOfWork.AnimeRepository.UpdateAnime(existingAnime);
+
+            await _unitOfWork.CommitAsync();
+
+            return Ok(existingAnime);
+        }
     }
 }

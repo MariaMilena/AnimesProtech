@@ -45,4 +45,13 @@ public class AnimeRepository : IAnimeRepository
 
         return anime;
     }
+
+    public void UpdateAnime(Anime anime)
+    {
+        if (anime is null)
+            throw new InvalidOperationException("Anime não encontrado");
+
+        _appDbContext.Animes.Update(anime);
+
+    }
 }
